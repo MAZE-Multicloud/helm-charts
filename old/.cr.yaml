@@ -1,0 +1,15 @@
+owner: MAZE-MultiCloud
+git-repo: https://github.ibm.com/MAZE-MultiCloud/helm-charts/
+token: $GITHUB_TOKEN
+package-path: .cr-release-packages
+index-path: docs/index.yaml
+pages-branch: gh-pages
+
+cr index --config .cr.yaml \
+  -b https://github.ibm.com/ \
+  --owner MAZE-MultiCloud \
+  --git-repo https://github.ibm.com/MAZE-MultiCloud/helm-charts/ \
+  --token $GITHUB_TOKEN \
+  --package-path .cr-release-packages \
+  --index-path docs/index.yaml \
+  --pages-branch gh-pages
