@@ -1,0 +1,7 @@
+owner: MAZE-MultiCloud
+git-repo: helm-charts
+charts-repo: https://github.ibm.com/MAZE-MultiCloud/helm-charts/
+github_api_url: https://github.ibm.com/api/v3
+token: $GITHUB_TOKEN
+package-path: .cr-release-packages
+index-path: docs/index.yaml
