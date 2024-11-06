@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Helm Charts Repository</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    p {
+      font-size: 1.2em;
+      color: #555;
+    }
+    .chart-list {
+      margin-top: 20px;
+    }
+    .chart-list li {
+      font-size: 1.1em;
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to the Helm Charts Repository</h1>
+  <p>This repository contains Helm charts for deploying applications in your Kubernetes environment.</p>
+
+  <div class="chart-list">
+    <h2>Available Charts:</h2>
+    <ul>
+      <li><strong>Maze Chart</strong>: Helm chart for deploying Maze application.</li>
+      <!-- You can add more charts here as you release more versions -->
+    </ul>
+  </div>
+
+  <p>To install the Maze chart, use the following Helm command:</p>
+  <pre>
+    helm repo add maze-repo https://github.ibm.com/MAZE-MultiCloud/helm-charts/gh-pages/
+    helm repo update
+    helm install maze maze-repo/maze
+  </pre>
+
+  <p>For more information, visit the official documentation of the charts.</p>
+</body>
+</html>
