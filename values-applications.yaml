@@ -1,0 +1,77 @@
+autoscaling:
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 70
+  targetDiskUtilizationPercentage: 70
+maze:
+  services:
+    - name: maze-ui
+      port: 4200
+      target: 4200
+      release:
+        version: 1.0.0
+      autoscaling:
+        enabled: true
+      deployment:
+        replicaCount: 1
+        repository: 170700933973.dkr.ecr.eu-west-2.amazonaws.com/ui
+        pullPolicy: Always
+      ingress:
+        enabled: true
+        name: maze-ui-ingress
+        port: 4200
+        path: /
+        tlsSecret: letsencrypt
+      svc:
+        type: ClusterIP
+        port_name: auth-port
+        name: maze-ui-svc
+      cm:
+        name: environment
+      nocommand: true
+    - name: maze-core
+      port: 8080
+      target: 8080
+      release:
+        version: 1.0.0
+      autoscaling:
+        enabled: true
+      deployment:
+        replicaCount: 1
+        repository: 170700933973.dkr.ecr.eu-west-2.amazonaws.com/maze
+        pullPolicy: Always
+      ingress:
+        enabled: true
+        name: maze-core-ingress
+        port: 8080
+        path: /api
+        tlsSecret: letsencrypt
+      svc:
+        type: ClusterIP
+        port_name: auth-port
+        name: maze-core-svc
+      cm:
+        name: environment
+      command: npm run production
+    - name: maze-images
+      port: 8085
+      target: 8085
+      release:
+        version: 1.0.0
+      autoscaling:
+        enabled: true
+      ingress:
+        enabled: true
+        name: maze-images-ingress
+        port: 8085
+        path: /images
+        tlsSecret: letsencrypt
+      deployment:
+        replicaCount: 1
+        repository: 170700933973.dkr.ecr.eu-west-2.amazonaws.com/maze
+      svc:
+        type: ClusterIP
+        name: maze-images-svc
+      cm:
+        name: environment
