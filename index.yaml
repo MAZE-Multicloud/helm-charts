@@ -9,4 +9,4 @@ entries:
     name: myapp
     version: 0.1.0
     urls:
-      - "https://github.com/MAZE-MultiCloud/helm-charts/charts/maze-0.1.0.tgz"
+      - ""https://maze-multicloud.github.io/helm-charts/charts/maze-0.1.0.tgz"
