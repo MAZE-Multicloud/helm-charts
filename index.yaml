@@ -5,7 +5,7 @@ entries:
     appVersion: "1.0.0"
     created: "2024-11-06T10:00:00Z"
     description: "MAZE MultiCloud Application Helm Chart"
-    digest: cc5997e45a65c861facd5414c9f27745dda6fc7ae9c6edefe9ded334fe0b0958
+    digest: 52192e1766b976f256b0a6aa8dbd78e8d56cff90284895cba1c10864b5b97866
     name: myapp
     version: 0.1.0
     urls:
