@@ -1,0 +1,187 @@
+# prettier-ignore
+{{- range $key, $value := .Values.maze.services  }}
+{{- if $value.deployment }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $value.name }}
+  labels:
+    app.kubernetes.io/name: {{ $value.name }}
+    app.kubernetes.io/instance: {{ $value.release.version }}
+spec:
+  {{- if not $value.autoscaling.enabled }}
+  replicas: {{ $value.deployment.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: {{ $value.name }}
+      app.kubernetes.io/instance: {{ $value.release.version }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ $value.name }}
+        app.kubernetes.io/instance: {{ $value.release.version }}
+    spec:
+      containers:
+        - name: {{ $value.name }}
+          {{- if $value.notag }}
+          image: "{{ $value.deployment.repository }}"
+          {{- else}}
+          {{- if $value.tag }}
+          image: "{{ $value.deployment.repository }}:{{ $value.tag }}"
+          {{- else}}
+          image: "{{ $value.deployment.repository }}:{{- $.Values.tag }}"
+          {{- end}}
+          {{- end}}
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: {{ $value.target }}
+          {{- if not $value.nocommand }} 
+          {{- if $value.command }}
+          command:
+            - /bin/sh
+            - -c
+            - {{ $value.command }}
+          {{- else }}
+          command:
+            - /bin/sh
+            - -c
+            - npm run start -- {{ $value.name }}
+          {{- end }}
+          {{- end }}
+          {{- if $value.env }} 
+          env: {{ $value.env }}
+          {{- end }}
+          {{- if $value.cm }} 
+          envFrom:
+            - configMapRef:
+                name: {{ $value.cm.name }}
+          {{- end }}
+          
+
+{{- end}}
+---
+{{- if $value.cronjob }}
+apiVersion: apps/v1
+kind: CronJob
+metadata:
+  name: {{ $value.name }}
+  labels:
+    app.kubernetes.io/name: {{ $value.name }}
+    app.kubernetes.io/instance: {{ $value.release.version }}
+spec:
+  {{- if not $value.autoscaling.enabled }}
+  replicas: {{ $value.serive.deployment.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: {{ $value.name }}
+      app.kubernetes.io/instance: {{ $value.release.version }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ $value.name }}
+        app.kubernetes.io/instance: {{ $value.release.version }}
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: {{ $value.cm.name }}
+          name: {{ $value.name }}
+          image: "{{ $value.deployment.repository }}:{{- $.Values.tag }}"
+          imagePullPolicy: "Always"
+          ports:
+            - name: "{{ $value.name }}-port"
+            - containerPort: {{ $value.target }}
+          command:
+            - /bin/sh
+            - -c
+            - npm run {{ $value.name }}
+{{- end}}
+---
+
+{{- if $value.autoscaling.enabled }}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ $value.name }}
+  labels:
+    app.kubernetes.io/name: {{ $value.name }}
+    app.kubernetes.io/instance: {{ $value.name }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ $value.name }}
+  minReplicas: {{ $.Values.autoscaling.minReplicas }}
+  maxReplicas: {{ $.Values.autoscaling.maxReplicas }}
+  metrics:
+    {{- if $.Values.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: {{ $.Values.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+    {{- if $.Values.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: {{ $.Values.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+
+---
+{{- if $value.ingress }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: 'true'
+  generation: 1
+  labels:
+    role: ingress
+  name: {{ $value.ingress.name }}
+spec:
+  rules:
+    - host: {{ $.Values.host }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: {{ $value.svc.name }}
+                port:
+                  number: {{ $value.ingress.port }}
+            path: {{ $value.ingress.path }}
+            pathType: Prefix
+  tls:
+    - hosts:
+        - {{ $.Values.host }}
+      secretName: {{ $value.ingress.tlsSecret }}
+status:
+  loadBalancer:
+    ingress:
+      - hostname: {{ $.Values.lb }}
+{{- end}}
+---
+{{- if $value.svc }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{$value.svc.name}}
+  labels:
+    app.kubernetes.io/name: {{$value.svc.name}}
+    app.kubernetes.io/instance: {{ $value.release.version }}
+spec:
+  type: {{ $value.svc.type }}
+  ports:
+    - port: {{ $value.port }}
+      targetPort: {{ $value.target }}
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: {{ $value.name }}
+    app.kubernetes.io/instance: {{ $value.release.version }}
+{{- end}}
+{{- end }}
+---
+{{- end }}
