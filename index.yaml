@@ -6,7 +6,8 @@ entries:
     created: "2024-11-06T10:00:00Z"
     description: "MAZE MultiCloud Application Helm Chart"
     digest: cc5997e45a65c861facd5414c9f27745dda6fc7ae9c6edefe9ded334fe0b0958
-    name: myapp
+    name: maze
     version: 0.1.0
     urls:
-      - "https://github.ibm.com/MAZE-MultiCloud/helm-charts/raw/gh-pages/charts/myapp-0.1.0.tgz"
+      - "https://maze-multicloud.github.io/helm-charts/charts/maze-0.1.0.tgz"
+
