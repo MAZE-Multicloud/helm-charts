@@ -12,7 +12,7 @@ maze:
       release:
         version: 1.0.0
       autoscaling:
-        enabled: true
+        enabled: false
       deployment:
         replicaCount: 1
         repository: 170700933973.dkr.ecr.eu-west-2.amazonaws.com/ui
@@ -36,7 +36,7 @@ maze:
       release:
         version: 1.0.0
       autoscaling:
-        enabled: true
+        enabled: false
       deployment:
         replicaCount: 1
         repository: 170700933973.dkr.ecr.eu-west-2.amazonaws.com/maze
@@ -60,7 +60,7 @@ maze:
       release:
         version: 1.0.0
       autoscaling:
-        enabled: true
+        enabled: false
       ingress:
         enabled: true
         name: maze-images-ingress
