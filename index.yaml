@@ -9,4 +9,4 @@ entries:
     name: myapp
     version: 0.1.0
     urls:
-      - "https://github.ibm.com/MAZE-MultiCloud/helm-charts/raw/gh-pages/charts/myapp-0.1.0.tgz"
+      - "https://github.ibm.com/MAZE-MultiCloud/helm-charts/charts/maze-0.1.0.tgz"
